@@ -7,6 +7,7 @@
 //
 
 #import "Dropbox.h"
+#import <SplunkMint-iOS/SplunkMint-iOS.h>
 
 //#warning INSERT YOUR OWN API KEY and SECRET HERE
 static NSString *apiKey = @"3i21b0o114ya0bq";
@@ -34,6 +35,14 @@ NSString * const accessTokenSecret = @"accessTokenSecret";
 
 +(void)requestTokenWithCompletionHandler:(DropboxRequestTokenCompletionHandler)completionBlock
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Loaded" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
+    
+    [[Mint sharedInstance] transactionStart:@"Login" andResultBlock:^(TransactionStartResult* result) {
+        NSLog(@"Authentication start for %@", [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
+    }];
     NSString *authorizationHeader = [self plainTextAuthorizationHeaderForAppKey:apiKey
                                                                       appSecret:appSecret
                                                                           token:nil
@@ -52,6 +61,11 @@ NSString * const accessTokenSecret = @"accessTokenSecret";
 
 +(void)exchangeTokenForUserAccessTokenURLWithCompletionHandler:(DropboxRequestTokenCompletionHandler)completionBlock
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Loaded" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
+    
     NSString *urlString = [NSString stringWithFormat:@"https://api.dropbox.com/1/oauth/access_token?"];
     NSURL *requestTokenURL = [NSURL URLWithString:urlString];
     
@@ -75,6 +89,10 @@ NSString * const accessTokenSecret = @"accessTokenSecret";
 
 +(NSString*)plainTextAuthorizationHeaderForAppKey:(NSString*)appKey appSecret:(NSString*)appSecret token:(NSString*)token tokenSecret:(NSString*)tokenSecret
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Loaded" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
     // version, method, and oauth_consumer_key are always present
     NSString *header = [NSString stringWithFormat:@"OAuth oauth_version=\"1.0\",oauth_signature_method=\"PLAINTEXT\",oauth_consumer_key=\"%@\"",apiKey];
     

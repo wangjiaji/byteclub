@@ -15,7 +15,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[Mint sharedInstance] initAndStartSession:@"6c105950"];
+    [[Mint sharedInstance] initAndStartSession:@"9920bf4f"];
     [self initAppearance];
     
     // Override point for customization after application launch.
@@ -27,7 +27,13 @@
     
     // always assumes token is valid - should probably check in a real app
     if (token) {
+        [Mint sharedInstance].userIdentifier = token;
+        [[Mint sharedInstance] initAndStartSession:@"9920bf4f"];
         [self.window setRootViewController:initViewController];
+        [[Mint sharedInstance] logEventAsyncWithTag:@"Login with User Default" completionBlock:^(MintResult *mintLogResult) {
+            NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+            NSLog(@"Log result: %@", logResultState);
+        }];
     } else {
         [(UINavigationController *)self.window.rootViewController pushViewController:initViewController animated:NO];
     }
@@ -36,6 +42,10 @@
 
 - (void)initAppearance
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Init" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
     UIColor *byteClubBlue = [UIColor colorWithRed:61/255.0f
                                             green:154/255.0f
                                              blue:232/255.0f
@@ -48,6 +58,10 @@
     
     [[UIToolbar appearance] setBarStyle:UIBarStyleBlackOpaque];
     [[UIToolbar appearance] setBarTintColor:byteClubBlue];
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Loaded" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
 
 }
 
@@ -103,6 +117,12 @@
                 NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 NSDictionary *accessTokenDict = [Dropbox dictionaryFromOAuthResponseString:response];
                 
+                [Mint sharedInstance].userIdentifier = accessTokenDict[@"uid"];
+                [[Mint sharedInstance] initAndStartSession:@"9920bf4f"];
+                [[Mint sharedInstance] transactionStop:@"Login" andResultBlock:^(TransactionStopResult* result) {
+                    NSLog(@"Authentication completed for %@", [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
+                }];
+                
                 [[NSUserDefaults standardUserDefaults] setObject:accessTokenDict[oauthTokenKey] forKey:accessToken];
                 [[NSUserDefaults standardUserDefaults] setObject:accessTokenDict[oauthTokenKeySecret] forKey:accessTokenSecret];
                 [[NSUserDefaults standardUserDefaults] synchronize];
@@ -120,6 +140,9 @@
                 });
                 
             } else {
+                [[Mint sharedInstance] transactionCancel:@"Login" reason:error.localizedDescription andResultBlock:^(TransactionStopResult* result) {
+                    NSLog(@"Login failed");
+                }];
                 // HANDLE BAD RESPONSE //
                 NSLog(@"exchange request for access token unexpected response %@",
                       [NSHTTPURLResponse localizedStringForStatusCode:httpResp.statusCode]);

@@ -1,6 +1,7 @@
 
 #import "OAuthLoginViewController.h"
 #import "Dropbox.h"
+#import <SplunkMint-iOS/SplunkMint-iOS.h>
 
 @interface OAuthLoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextView *loginView;
@@ -52,7 +53,6 @@
             if (httpResp.statusCode == 200) {
                 
                 NSString *responseStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                
                 /*
                  oauth_token The request token that was just authorized. The request token secret isn't sent back.
                  If the user chooses not to authorize the application,
@@ -87,6 +87,10 @@
 
 - (void)didReceiveMemoryWarning
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"UI Loaded" completionBlock:^(MintResult *mintLogResult) {
+        NSString* logResultState = mintLogResult == OKResultState ? @"Log sent" : @"Log failed";
+        NSLog(@"Log result: %@", logResultState);
+    }];
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
