@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C0F798A1AB286C000EE46DF /* SplunkMint-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0F79891AB286C000EE46DF /* SplunkMint-iOS.framework */; };
 		0C0F798E1AB286F500EE46DF /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0F798B1AB286F500EE46DF /* CoreTelephony.framework */; };
 		0C0F798F1AB286F500EE46DF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0F798C1AB286F500EE46DF /* libz.dylib */; };
 		0C0F79901AB286F500EE46DF /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0F798D1AB286F500EE46DF /* SystemConfiguration.framework */; };
+		0CA7DED11AB331BB00F0B541 /* SplunkMint-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CA7DED01AB331BB00F0B541 /* SplunkMint-iOS.framework */; };
 		CB63AF6517A3446300DEBCD7 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = CB63AF6417A3446300DEBCD7 /* Dropbox.m */; };
 		CB63AF6817A3452700DEBCD7 /* OAuthLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB63AF6717A3452700DEBCD7 /* OAuthLoginViewController.m */; };
 		CB6A0DA317A5D43400E226E7 /* NotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB6A0DA217A5D43400E226E7 /* NotesViewController.m */; };
@@ -49,6 +49,7 @@
 		0C0F798B1AB286F500EE46DF /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		0C0F798C1AB286F500EE46DF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		0C0F798D1AB286F500EE46DF /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		0CA7DED01AB331BB00F0B541 /* SplunkMint-iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SplunkMint-iOS.framework"; path = "../SplunkMint-iOS.framework"; sourceTree = "<group>"; };
 		CB63AF6317A3446300DEBCD7 /* Dropbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
 		CB63AF6417A3446300DEBCD7 /* Dropbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		CB63AF6617A3452700DEBCD7 /* OAuthLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthLoginViewController.h; sourceTree = "<group>"; };
@@ -89,10 +90,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CA7DED11AB331BB00F0B541 /* SplunkMint-iOS.framework in Frameworks */,
 				0C0F798E1AB286F500EE46DF /* CoreTelephony.framework in Frameworks */,
 				0C0F798F1AB286F500EE46DF /* libz.dylib in Frameworks */,
 				0C0F79901AB286F500EE46DF /* SystemConfiguration.framework in Frameworks */,
-				0C0F798A1AB286C000EE46DF /* SplunkMint-iOS.framework in Frameworks */,
 				CBC908A517A09FD8001A0777 /* CoreGraphics.framework in Frameworks */,
 				CBC908A717A09FD8001A0777 /* UIKit.framework in Frameworks */,
 				CBC908A317A09FD8001A0777 /* Foundation.framework in Frameworks */,
@@ -145,6 +146,7 @@
 		CBC908A117A09FD8001A0777 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0CA7DED01AB331BB00F0B541 /* SplunkMint-iOS.framework */,
 				0C0F798B1AB286F500EE46DF /* CoreTelephony.framework */,
 				0C0F798C1AB286F500EE46DF /* libz.dylib */,
 				0C0F798D1AB286F500EE46DF /* SystemConfiguration.framework */,
@@ -467,6 +469,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/Jiaji/Programs/iOS,
+					/Users/jiaji/Programs/iOS,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ByteClub/ByteClub-Prefix.pch";
@@ -488,6 +491,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/Jiaji/Programs/iOS,
+					/Users/jiaji/Programs/iOS,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ByteClub/ByteClub-Prefix.pch";

@@ -27,7 +27,7 @@
     
     // always assumes token is valid - should probably check in a real app
     if (token) {
-        [Mint sharedInstance].userIdentifier = token;
+        [Mint sharedInstance].userIdentifier = [[NSUserDefaults standardUserDefaults] valueForKey:@"uid"];
         [[Mint sharedInstance] initAndStartSession:@"9920bf4f"];
         [self.window setRootViewController:initViewController];
         [[Mint sharedInstance] logEventAsyncWithTag:@"Login with User Default" completionBlock:^(MintResult *mintLogResult) {
@@ -35,6 +35,7 @@
             NSLog(@"Log result: %@", logResultState);
         }];
     } else {
+        
         [(UINavigationController *)self.window.rootViewController pushViewController:initViewController animated:NO];
     }
     return YES;
@@ -117,14 +118,14 @@
                 NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 NSDictionary *accessTokenDict = [Dropbox dictionaryFromOAuthResponseString:response];
                 
-                [Mint sharedInstance].userIdentifier = accessTokenDict[@"uid"];
-                [[Mint sharedInstance] initAndStartSession:@"9920bf4f"];
                 [[Mint sharedInstance] transactionStop:@"Login" andResultBlock:^(TransactionStopResult* result) {
-                    NSLog(@"Authentication completed for %@", [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
+                    NSLog(@"Authentication completed for login");
                 }];
+                [Mint sharedInstance].userIdentifier = accessTokenDict[@"uid"];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:accessTokenDict[oauthTokenKey] forKey:accessToken];
                 [[NSUserDefaults standardUserDefaults] setObject:accessTokenDict[oauthTokenKeySecret] forKey:accessTokenSecret];
+                [[NSUserDefaults standardUserDefaults] setObject:accessTokenDict[@"uid"] forKey:@"uid"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 // now load main part of application

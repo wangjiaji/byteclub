@@ -10,6 +10,7 @@
 #import "DBFile.h"
 #import "NoteDetailsViewController.h"
 #import "Dropbox.h"
+#import <SplunkMint-iOS/SplunkMint-iOS.h>
 
 @interface NotesViewController ()<NoteDetailsViewControllerDelegate>
 
@@ -33,6 +34,8 @@
     
     // 3
     _session = [NSURLSession sessionWithConfiguration:config];
+      
+      [[Mint sharedInstance] logEventAsyncWithTag:@"Notes Session Configured" completionBlock:nil];
   }
   return self;
 }
@@ -66,6 +69,7 @@
                                   NSURLResponse *response,
                                   NSError *error) {
                 if (!error) {
+                    [[Mint sharedInstance] logEventAsyncWithTag:@"Raw Notes Loaded" completionBlock:nil];
                   // TODO 1: More coming here!
                   // 1
                   NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
@@ -84,6 +88,7 @@
                     if (!jsonError) {                    
                       // TODO 2: More coming here!
                       // 1
+                        [[Mint sharedInstance] logEventAsyncWithTag:@"Parse Notes Done" completionBlock:nil];
                       NSArray *contentsOfRootDirectory = notesJSON[@"contents"];
                       
                       for (NSDictionary *data in contentsOfRootDirectory) {
@@ -98,7 +103,6 @@
                          return [obj1 compare:obj2];
                        }];
                       
-                      self.notes = notesFound;
                       
                       // 6
                       dispatch_async(dispatch_get_main_queue(), ^{
@@ -106,9 +110,13 @@
                         [self.tableView reloadData];
                       });
 
+                    } else {
+                        [[Mint sharedInstance] logEventAsyncWithTag:@"Parse Notes Failed" completionBlock:nil];
                     }
                   }
                   
+                } else {
+                    [[Mint sharedInstance] logEventAsyncWithTag:@"Get Raw Notes Failed" completionBlock:nil];
                 }
               }];
   
@@ -175,6 +183,8 @@
 {
     // just close modal vc
     [self dismissViewControllerAnimated:YES completion:nil];
+    NSArray* test = @[@1, @2, @3];
+    [test objectAtIndex:5];
 }
 
 @end

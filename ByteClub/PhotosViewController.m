@@ -11,6 +11,7 @@
 #import "Dropbox.h"
 #import "DBFile.h"
 #import "DownloadViewController.h"
+#import <SplunkMint-iOS/SplunkMint-iOS.h>
 
 @interface PhotosViewController ()<UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, NSURLSessionTaskDelegate>
 
@@ -71,6 +72,8 @@
   [[_session dataTaskWithURL:url completionHandler:^(NSData
                                                      *data, NSURLResponse *response, NSError *error) {
     if (!error) {
+        [[Mint sharedInstance] logEventAsyncWithTag:@"Get raw photos" completionBlock:nil];
+        
       NSHTTPURLResponse *httpResp =
       (NSHTTPURLResponse*) response;
       if (httpResp.statusCode == 200) {
@@ -82,8 +85,9 @@
                               error:&jsonError];
         NSMutableArray *dbFiles =
         [[NSMutableArray alloc] init];
-        
+
         if (!jsonError) {
+            [[Mint sharedInstance] logEventAsyncWithTag:@"Parsed photos" completionBlock:nil];
           for (NSDictionary *fileMetadata in
                filesJSON) {
             DBFile *file = [[DBFile alloc]
@@ -104,9 +108,11 @@
         }
       } else {
         // HANDLE BAD RESPONSE //
+          [[Mint sharedInstance] logEventAsyncWithTag:@"Bad Response" completionBlock:nil];
       }
     } else {
       // ALWAYS HANDLE ERRORS :-] //
+        [[Mint sharedInstance] logEventAsyncWithTag:@"Connection failed" completionBlock:nil];
     }
   }] resume];
 }
@@ -185,6 +191,7 @@
 
 - (IBAction)choosePhoto:(UIBarButtonItem *)sender
 {
+    [[Mint sharedInstance] transactionStart:@"Upload photo" andResultBlock:nil];
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.allowsEditing = NO;
     picker.delegate = self;
@@ -194,11 +201,16 @@
 #pragma mark - UIImagePickerControllerDelegate methods
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"Image Selection Cancelled" completionBlock:nil];
+    [[Mint sharedInstance] transactionCancel:@"Upload photo" reason:@"Cancel selection" andResultBlock:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
+    id this = self;
+    [this transactionName];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    [[Mint sharedInstance] logEventAsyncWithTag:@"Image Selected" completionBlock:nil];
     UIImage *image = info[UIImagePickerControllerOriginalImage];
     [self dismissViewControllerAnimated:YES completion:nil];
     [self uploadImage:image];
@@ -207,6 +219,9 @@
 // stop upload
 - (IBAction)cancelUpload:(id)sender {
   if (_uploadTask.state == NSURLSessionTaskStateRunning) {
+      [[Mint sharedInstance] transactionCancel:@"Upload photo" reason:@"Cancel upload" andResultBlock:^(TransactionStopResult* result) {
+          NSLog(@"!!! Upload cancelled by user");
+      }];
     [_uploadTask cancel];
   }
 }
@@ -269,6 +284,7 @@ didCompleteWithError:(NSError *)error
   if (!error) {
     // 2
     dispatch_async(dispatch_get_main_queue(), ^{
+        [[Mint sharedInstance] transactionStop:@"Upload photo" andResultBlock:nil];
       [self refreshPhotos];
     });
   } else {

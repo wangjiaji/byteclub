@@ -41,7 +41,7 @@ NSString * const accessTokenSecret = @"accessTokenSecret";
     }];
     
     [[Mint sharedInstance] transactionStart:@"Login" andResultBlock:^(TransactionStartResult* result) {
-        NSLog(@"Authentication start for %@", [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
+        NSLog(@"Authentication start");
     }];
     NSString *authorizationHeader = [self plainTextAuthorizationHeaderForAppKey:apiKey
                                                                       appSecret:appSecret

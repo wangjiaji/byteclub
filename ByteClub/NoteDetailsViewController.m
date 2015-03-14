@@ -9,6 +9,7 @@
 #import "NoteDetailsViewController.h"
 #import "Dropbox.h"
 #import "DBFile.h"
+#import <SplunkMint-iOS/SplunkMint-iOS.h>
 
 @interface NoteDetailsViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *filename;
@@ -55,6 +56,13 @@
 
 -(void)retreiveNoteText
 {
+    [[Mint sharedInstance] transactionStart:@"Edit note" andResultBlock:^(TransactionStartResult* result) {
+        if (result.transactionStatus == UserSuccessfullyStoppedTransaction) {
+            NSLog(@"Notes successfully edited");
+        } else {
+            NSLog(@"Note not edited: %@", result.transactionName);
+        }
+    }];
   // 1
   NSString *fileApi =
   @"https://api-content.dropbox.com/1/files/dropbox";
@@ -75,6 +83,7 @@
     if (!error) {
       NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
       if (httpResp.statusCode == 200) {
+          [[Mint sharedInstance] logEventAsyncWithTag:@"Get note content" completionBlock:nil];
         // 3
         NSString *text =
         [[NSString alloc]initWithData:data
@@ -134,6 +143,9 @@
         NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
         
         if (!error && httpResp.statusCode == 200) {
+            [[Mint sharedInstance] transactionStop:@"Edit note" andResultBlock:^(TransactionStopResult* result) {
+                NSLog(@"Transaction stopped");
+            }];
           
           [self.delegate noteDetailsViewControllerDoneWithDetails:self];
         } else {
@@ -156,7 +168,7 @@
 
 - (IBAction)cancel:(id)sender
 {
-    
+    [[Mint sharedInstance] transactionCancel:@"Edit note" reason:@"User cancel" andResultBlock:nil];
     [self.delegate noteDetailsViewControllerDidCancel:self];
 }
 
