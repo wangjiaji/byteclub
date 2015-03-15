@@ -284,7 +284,9 @@ didCompleteWithError:(NSError *)error
   if (!error) {
     // 2
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[Mint sharedInstance] transactionStop:@"Upload photo" andResultBlock:nil];
+        [[Mint sharedInstance] transactionStop:@"Upload photo" andResultBlock:^(TransactionStopResult* result) {
+            NSLog(@"Photo upload complete");
+        }];
       [self refreshPhotos];
     });
   } else {

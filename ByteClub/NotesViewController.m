@@ -82,6 +82,8 @@
                     [NSJSONSerialization JSONObjectWithData:data
                                                     options:NSJSONReadingAllowFragments
                                                       error:&jsonError];
+                      
+                      NSLog(@"contents: %@", notesJSON[@"contents"]);
                     
                     NSMutableArray *notesFound = [[NSMutableArray alloc] init];
                     
@@ -103,7 +105,7 @@
                          return [obj1 compare:obj2];
                        }];
                       
-                      
+                        self.notes = notesFound;
                       // 6
                       dispatch_async(dispatch_get_main_queue(), ^{
                         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -141,6 +143,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
+    NSLog(@"%u", _notes.count);
     return _notes.count;
 }
 
